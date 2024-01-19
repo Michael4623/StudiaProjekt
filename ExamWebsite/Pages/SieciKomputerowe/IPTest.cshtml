@@ -1,0 +1,177 @@
+﻿@page
+@model ExamWebsite.Pages.SieciKomputerowe.IPTestModel
+@{
+    int i = 1;
+}
+
+<style>
+    .test-container {
+        max-width: 80%;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: inherit;
+        border: 1px none #ddd;
+        border-radius: 5px;
+    }
+
+    .answer {
+        background-color: #2d2d2d;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px none #ddd;
+        cursor: pointer;
+    }
+
+    .selected-answer {
+        background-color: #4CAF50;
+        color: #fff;
+    }
+
+    .incorrect-answer {
+        background-color: #FF5733;
+        color: #fff;
+    }
+</style>
+
+<center>
+    <h1>EGZAMIN Z ADRESACJI IP</h1><br />
+    <h2>Pozostały czas: <span id="timer"></span></h2>
+    <h2><span id="resultShow"></span></h2>
+</center>
+
+<div class="test-container">
+    @foreach (var question in Model.QuestionsT)
+    {
+        <div>
+            <hr /><p>@i. @question.QuestionText</p><hr />
+            @foreach (var answer in question.Answers.Select((value, index) => new { Value = value, Index = index }))
+            {
+                <div class="answer" data-question="@question.QuestionText" data-answer="@answer.Index" data-answer-selected="@answer.Value" data-correct-answer="@question.CorrectAnswer" onclick='ToggleAnswer("@question.QuestionText", @answer.Index, "@question.CorrectAnswer")'>@answer.Value</div>
+            }
+        </div>
+        i++;
+    }
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#resultModal" onclick="FinishTest()">
+        <center>Zakończ test</center>
+    </button>
+</div>
+
+<script>
+    function ToggleAnswer(questionText, answerIndex, correctAnswer) {
+        console.log("ToggleAnswer - Pytanie: " + questionText + ", Odpowiedź: " + answerIndex);
+
+        var answerElement = document.querySelector('.answer[data-question="' + questionText + '"][data-answer="' + answerIndex + '"]');
+        var selectedAnswersInQuestion = document.querySelectorAll('.answer.selected-answer[data-question="' + questionText + '"]');
+
+        selectedAnswersInQuestion.forEach(function (element) {
+            element.classList.remove('selected-answer');
+        });
+
+        if (answerElement.classList.contains('selected-answer')) {
+            answerElement.classList.remove('selected-answer');
+        } else {
+            answerElement.classList.add('selected-answer');
+        }
+    }
+
+    function FinishTest() {
+        stopTimerFinishTest();
+        var totalQuestions = @Model.QuestionsT.Count;
+        var correctAnswers = 0;
+
+        document.querySelectorAll('.answer.selected-answer[data-correct-answer]').forEach(function (element) {
+            var userAnswer = element.getAttribute('data-answer-selected');
+            var correctAnswer = element.getAttribute('data-correct-answer');
+
+            if (userAnswer === correctAnswer) {
+                correctAnswers++;
+            } else {
+                element.classList.add('incorrect-answer');
+            }
+        });
+
+        var score = (correctAnswers / totalQuestions) * 100;
+
+        var resultModal = document.getElementById('resultModal');
+        var resultModalBody = resultModal.querySelector('.modal-body');
+        resultModalBody.innerHTML = '<center><p>Twój wynik: ' + score.toFixed(2) + '%</p></center>';
+        document.getElementById("resultShow").innerHTML = '<hr />Wynik egzaminu: ' + score.toFixed(2) + '%<hr />'
+    }
+
+    function updateTimer() {
+        var targetDate = new Date();
+        targetDate.setMinutes(targetDate.getMinutes() + 60);
+
+        var timerInterval;
+        var initialTimeRemaining;
+
+        function calculateTimeRemaining() {
+            var now = new Date();
+            var timeDiff = targetDate - now;
+
+            var minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+            return {
+                minutes: minutes,
+                seconds: seconds
+            };
+        }
+
+        function formatTime(minutes, seconds) {
+            return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        }
+
+        function displayTime() {
+            var timeRemaining = calculateTimeRemaining();
+            document.getElementById("timer").innerHTML = formatTime(timeRemaining.minutes, timeRemaining.seconds);
+        }
+
+        initialTimeRemaining = calculateTimeRemaining();
+
+        displayTime();
+
+        timerInterval = setInterval(displayTime, 1000);
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            var finalTimeRemaining = calculateTimeRemaining();
+            document.getElementById("timer").innerHTML = "" +
+                formatTime(finalTimeRemaining.minutes, finalTimeRemaining.seconds);
+        }
+
+        window.stopTimer = stopTimer;
+    }
+
+    function stopTimerFinishTest() {
+        setTimeout(function () {
+            stopTimer();
+        });
+    }
+
+    window.onload = function () {
+        updateTimer();
+    };
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<div class="modal fade" id="resultModal" tabindex="-1" role="dialog" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div style="background-color: #333333; color: #fff;" class="modal-content">
+            <div class="modal-header">
+                <center><h5 class="modal-title" id="resultModalLabel">Wynik testu</h5></center>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>

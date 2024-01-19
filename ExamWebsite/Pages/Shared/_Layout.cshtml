@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ExamWebsite</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/ExamWebsite.styles.css" asp-append-version="true" />
+        <style>
+            body {
+                background-color: #333333;
+                color: #fff;
+            }
+
+            .navbar {
+                background-color: #6a737b;
+                height: 7vh;
+            }
+
+            .navbar a {
+                color: #fff;
+                text-decoration: none;
+                padding: 10px;
+                margin: 0 10px;
+            }
+
+            .footer {
+                background-color: #6a737b;
+                color: #fff;
+                text-align: center;
+                font-size: 2vh;
+                position: fixed;
+                width: 100%;
+                height: 6vh;
+            }
+
+            .dropbtn {
+                color: white;
+                height: 100%;
+                width: 100%;
+                font-size: 16px;
+                border: none;
+                cursor: pointer;
+                padding: 15px;
+                box-sizing: border-box; 
+            }
+
+            .dropbtn:hover{
+                background-color: #555;
+            }
+
+            .dropdown {
+              position: relative;
+              display: inline-block;
+            }
+
+            .dropdown-content {
+              display: none;
+              position: absolute;
+              background-color: #272727;
+              min-width: 160px;
+              box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+              z-index: 1;
+            }
+
+            .dropdown-content a {
+              color: white;
+              font-weight: bold;
+              padding: 12px 16px;
+              text-decoration: none;
+              display: block;
+            }
+
+            .dropdown-content a:hover {background-color: #202020;}
+
+            .show {display:block;}
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg">
+            <div class="dropdown">
+              <button onclick="myFunction(1)" class="dropbtn btn btn-secondary">Strony internetowe</button>
+              <div id="myDropdown1" class="dropdown-content">
+                <a href="/StronyInternetowe/HtmlTest">HTML</a>
+                <a href="/StronyInternetowe/CssTest">CSS</a>
+                <a href="/StronyInternetowe/JavaScriptTest">JAVA SCRIPT</a>
+              </div>
+            </div>
+
+            <div class="dropdown">
+              <button onclick="myFunction(2)" class="dropbtn btn btn-secondary">Sieci komputerowe</button>
+              <div id="myDropdown2" class="dropdown-content">
+                <a href="/SieciKomputerowe/IPTest">Adresacja IP</a>
+                <a href="/SieciKomputerowe/ADTest">Active Directory</a>
+                <a href="/SieciKomputerowe/TPTest">Topologie sieci</a>
+                <a href="/SieciKomputerowe/SYSTest">Polecenia systemowe</a>
+              </div>
+            </div>
+
+            <div class="dropdown">
+              <button onclick="myFunction(3)" class="dropbtn btn btn-secondary">Bazy danych</button>
+              <div id="myDropdown3" class="dropdown-content">
+                <a href="/BazyDanych/SQLTest">SQL</a>
+              </div>
+            </div>
+        </nav>
+
+        <div class="content">
+            @RenderBody()
+        </div>
+
+        <div class="footer">
+            ExamWebsite@2023
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-rAR8w3EgcXxN2HqZlJ/4SqroJ8It++gAgGlcG7azKHJ6gM+qAgIxXf1qVn4uSkLb7" crossorigin="anonymous"></script>
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </body>
+</html>
+
+<script>
+    function myFunction(item) {
+        //na razie na sztywno zabezpieczenie przed kilkoma dropdown
+        document.getElementById("myDropdown1").classList.remove("show");
+        document.getElementById("myDropdown2").classList.remove("show");
+        document.getElementById("myDropdown3").classList.remove("show");
+        document.getElementById("myDropdown"+item).classList.toggle("show");
+    }
+
+    window.onclick = function(event) {
+        //debugger;
+        if (!event.target.matches('.dropbtn')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            var i;
+            for (i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+</script>
